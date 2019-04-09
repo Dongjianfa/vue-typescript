@@ -1,2 +1,0 @@
-# vue-typescript
-use test
