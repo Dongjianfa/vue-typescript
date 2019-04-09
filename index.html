@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<link rel="stylesheet" type="text/css" href="css/mui.css?v=1.0"/>
+	<link rel="stylesheet" type="text/css" href="css/iconfont.css"/>
+	<link rel="stylesheet" type="text/css" href="css/layer.css"/>
+	<link rel="stylesheet" type="text/css" href="css/common.css?v=1.0"/>
+	<link rel="stylesheet" type="text/css" href="css/style.css?v=1.0"/>
+	<link rel="stylesheet" type="text/css" href="css/index.css?v=1.0"/>
+	<link rel="stylesheet" type="text/css" href="css/map.css"/> 
+  <script src="https://webapi.amap.com/maps?v=1.4.13&key=dbdcb96ff42411db0216ddc302b2e746"></script>
+  <script type="text/javascript" src="https://a.amap.com/jsapi_demos/static/demo-center/js/jquery-1.11.1.min.js" ></script>
+  <script type="text/javascript" src="https://a.amap.com/jsapi_demos/static/demo-center/js/underscore-min.js" ></script>
+  <script type="text/javascript" src="https://a.amap.com/jsapi_demos/static/demo-center/js/backbone-min.js" ></script>
+  <script type="text/javascript" src='https://a.amap.com/jsapi_demos/static/demo-center/js/prety-json.js'></script>
+	<!--<script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>-->
+	<title>今日考勤</title>  
+</head>
+<body>
+	<div class="checkBox">
+		<div class="header">今日考勤</div> 
+		<div class="checkBody">
+			<div class="timeContent alineBottom">
+				<h1 id="date">11:13:59</h1>
+				<p>考勤日：<span>2019-03-16星期六</span></p>
+				<p>已工作<u>0.04</u>小时</p>
+			</div>
+			<div class="link" @click="toshow">
+				<a>
+					<p>考勤</p>
+					<span>详情</span>
+					<i class="iconfont">&#xe633;</i>
+				</a>
+			</div>			
+		</div>
+		<div class="sign">
+			<ul>
+				<li>
+					<div class="editShow alineBottom">
+						<div class="lft">
+							<h2>签到</h2>
+							<p>09:00</p>
+						</div>
+						<div class="center" :class="{active:showUp==1}">
+							<p @click="showMap">云南省昆明市西山区秀苑路103</p>
+							<p><span>迟到</span><a @click="showMornin">备注</a></p>
+						</div>
+						<div class="rgt" @click="punchCarda">
+							<span :class="{active:showUp==1}" v-html="date1"></span>
+						</div>
+					</div>
+					<div class="showDetail" v-show="showRemarkStatus1==1">
+						<p>策划</p>
+						<div class="imgBox">
+							<img src="images/chackeIn.png"/>				
+							<img src="images/chackeIn.png"/>				
+							<img src="images/chackeIn.png"/>				
+							<img src="images/chackeIn.png"/>
+						</div>
+						<span class="icon iconfont">&#xe63a;</span>
+					</div>
+				</li>
+				<li :class="{active:showRemarkStatus2==1}">
+					<div class="editShow">
+						<div class="lft">
+							<h2>签退</h2>
+							<p>09:00</p>
+						</div>
+						<div class="center" :class="{active:showLate==1}">
+							<p @click="showMap">云南省昆明市西山区秀苑路103</p>
+							<p><span>迟到</span><a @click="showNext">备注</a></p>
+						</div>
+						<div class="rgt" @click="punchCardb">
+							<span :class="{active:showLate==1}" v-html="date2"></span>									
+						</div>
+					</div>
+					<div class="showDetail" v-show="showRemarkStatus2==1">
+						<p>策划</p>
+						<div class="imgBox">
+							<img src="images/chackeIn.png"/>
+							<img src="images/chackeIn.png"/>					
+							<img src="images/chackeIn.png"/>					
+							<img src="images/chackeIn.png"/>					
+						</div>
+						<span class="icon iconfont">&#xe63a;</span>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="pro">
+			签到/签退成功后，点击时间可更新考勤信息；备注只能在考勤当天内修改
+		</div>
+		<div class="checkfooter">
+			<ul>
+				<li class="active">
+					<a href="">
+						<div></div>
+						<p>今日考勤</p>
+					</a>					
+				</li>
+				<li>
+					<a href="html/static.html">
+						<div></div>
+						<p>统计</p>
+					</a>					
+				</li>
+				<li>
+					<a href="html/complaint.html">
+						<div></div>
+						<p>我的申述</p>
+					</a>
+				</li>
+				<li>
+					<a id="showSelect">
+						<div></div>
+						<p>相关</p>
+					</a>					
+				</li>
+			</ul>
+		</div>
+		<div class="checkDetail" :class="{active:showDetail==1}">
+			<h2>考勤</h2>
+			<div class="title">
+				<h3>新考勤</h3>
+				<p>每天06:00</p>
+			</div>
+			<div class="title">			
+				<div>
+					<h3>签到时间</h3>
+					<p>每天09:00</p>
+				</div>
+				<div>
+					<h3>限制</h3>
+					<p>不限</p>
+				</div>
+			</div>
+			<div class="title">			
+				<div>
+					<h3>签退时间</h3>
+					<p>每天18:00</p>
+				</div>
+				<div>
+					<h3>限制</h3>
+					<p>不限</p>
+				</div>
+			</div>
+			<div class="title">
+				<h3>休息时间</h3>
+				<p>0小时</p>
+			</div>
+			<div class="title">
+				<h3>考勤月度</h3>
+				<p>1号至当月31号</p>
+			</div>
+			<div class="title">
+				<h3>工作日</h3>
+				<p>周一、周二、周三、周四、周五</p>
+			</div>
+			<div class="backbox"><div class="back" @click="hideCaver">返回</div></div>
+		</div>
+		<div class="showMap" :class="{active:showMapStatus==1}">
+			<div id="allmap"></div>
+			<div id="tip"></div>
+			<div class="msg">
+				<p class="adist">地址：</p>
+				<p id="adress">云南昆明市西山区秀苑路108号</p> 
+				<p class="log" id="log">经度102.665249，纬度：25.04199</p>
+				<p class="cancel"  @click="cancel">取消</p>				
+			</div>
+		</div>
+	</div>
+	
+	<script src="js/vue.js?v=1.0" type="text/javascript" charset="utf-8"></script>
+	<script src="js/mock.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/layer.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/mui.js?v=1.0" type="text/javascript" charset="utf-8"></script>
+	<script src="js/jquery.min.js?v=1..0" type="text/javascript" charset="utf-8"></script>	
+	<script src="js/common.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/map.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">   
+
+		Mock.mock("http://getDate.con",{ 
+			'data':[{
+			"address":"@province"+"@city",//地址
+			"mark":{
+				"txt":"@word", 
+				"img":["@image"]
+			},
+			"date":'@time("HH:mm")'},{
+			"address":"@province"+"@city",//地址
+			"mark":{
+				"txt":"@word", 
+				"img":["@image"]
+			},
+			"date":'@time("HH:mm")'}] 
+		}) 
+		$.ajax({
+            url:'http://getDate.con', 
+            dataType:'json',
+            success:function(e){
+                console.log(JSON.stringify(e))
+            }
+      	})
+		
+		
+		
+		var vm=new Vue({
+			el:".checkBox",
+			data:{
+				showUp:0,
+				showLate:1,
+				date1:"签到",
+				date2:"签到",
+				showDetail:0,
+				showMapStatus:0,
+				address:{},
+				showRemarkStatus1:0,
+				showRemarkStatus2:0,
+				obj:{}
+			},
+			created:function(){
+				reDirect();
+			}, 
+			methods:{
+				toshow:function(){
+					this.showDetail=1;					
+				},
+				hideCaver:function(){
+					this.showDetail=0;
+				},
+				showMap:function(){
+					this.showMapStatus=1;
+					reDirect();
+				},
+				cancel:function(){
+					this.showMapStatus=0;					
+				},
+				showMornin:function(){					
+					this.showRemarkStatus1==0?this.showRemarkStatus1=1:this.showRemarkStatus1=0;
+				},
+				showNext:function(){
+					this.showRemarkStatus2==0?this.showRemarkStatus2=1:this.showRemarkStatus2=0;
+				},
+				punchCarda:function(){
+					if(this.showRemarkStatus1==0){
+						layer.open({
+							title: [
+								'提示',
+								'background-color:#f4f3f8; color:#ff5720; padding:0;'
+							],
+							//						anim: false,
+							content: '发布寻车需经过微购审核，您可以在”我的寻车“查看其状态。确认提交？',
+							btn: ['确认', '取消'],
+							yes: function(index) {
+								//vm.submitInfo();
+								layer.close(index)
+							}
+
+						});
+					}
+				},
+				punchCardb:function(){
+					if(this.showRemarkStatus2==0){
+						
+					}
+				}
+			},
+			mounted:function(){
+				var self=this;
+				self.showUp==1?self.date1="签到":self.date1="10:00";
+				self.showLate==1?self.date2="签退":self.date2="10:0";
+			},
+			updated:function(){ 
+				
+				
+			}
+		})
+	</script>
+</body>
+</html>
